@@ -49,7 +49,7 @@ final class AttributeProcessorTest extends TestCase
 
         $tokenizerRegistry->shouldReceive('addListener')
             ->once()
-            ->withArgs(fn (AttributeProcessor $attributeProcessor) => true);
+            ->withArgs(fn (AttributeProcessor $attributeProcessor): bool => true);
 
         new AttributeProcessor($tokenizerRegistry, $reader, $factory, $listenerRegistry);
     }
@@ -94,10 +94,10 @@ final class AttributeProcessorTest extends TestCase
 
         $processor->process();
 
-        $this->assertSame((array)$args[0], $registry->events);
-        $this->assertEquals($args[1], $registry->listener);
-        $this->assertSame($args[2], $registry->priority);
-        $this->assertSame($listeners, $registry->listeners);
+        self::assertSame((array)$args[0], $registry->events);
+        self::assertEquals($args[1], $registry->listener);
+        self::assertSame($args[2], $registry->priority);
+        self::assertSame($listeners, $registry->listeners);
     }
 
     public static function listenersDataProvider(): \Traversable
