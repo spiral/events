@@ -8,11 +8,14 @@ use Spiral\Core\Container\Autowire;
 use Spiral\Core\CoreInterceptorInterface;
 use Spiral\Core\InjectableConfig;
 use Spiral\Events\Processor\ProcessorInterface;
+use Spiral\Interceptors\InterceptorInterface;
 
 /**
  * @psalm-type TProcessor = ProcessorInterface|class-string<ProcessorInterface>|Autowire<ProcessorInterface>
  * @psalm-type TListener = class-string|EventListener
- * @psalm-type TInterceptor = class-string<CoreInterceptorInterface>|CoreInterceptorInterface|Autowire<CoreInterceptorInterface>
+ * @psalm-type TLegacyInterceptor = class-string<CoreInterceptorInterface>|CoreInterceptorInterface|Autowire<CoreInterceptorInterface>
+ * @psalm-type TNewInterceptor = class-string<InterceptorInterface>|InterceptorInterface|Autowire<InterceptorInterface>
+ * @psalm-type TInterceptor = TLegacyInterceptor|TNewInterceptor
  * @property array{
  *     processors: TProcessor[],
  *     listeners: array<class-string, TListener[]>,
@@ -40,7 +43,7 @@ final class EventsConfig extends InjectableConfig
         foreach ($this->config['listeners'] as $event => $eventListeners) {
             $listeners[$event] = \array_map(
                 self::normalizeListener(...),
-                $eventListeners
+                $eventListeners,
             );
         }
 

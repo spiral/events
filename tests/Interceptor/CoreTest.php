@@ -13,7 +13,7 @@ final class CoreTest extends TestCase
 {
     public function testCallAction(): void
     {
-        $event = new class() {};
+        $event = new class {};
 
         $dispatcher = m::mock(EventDispatcherInterface::class);
         $dispatcher
@@ -24,6 +24,6 @@ final class CoreTest extends TestCase
 
         $core = new Core($dispatcher);
 
-        $this->assertSame($event, $core->callAction('', '', ['event' => $event]));
+        self::assertSame($event, $core->callAction('', '', ['event' => $event]));
     }
 }
