@@ -6,17 +6,16 @@ namespace Spiral\Events\Interceptor;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Core\CoreInterface;
-use Spiral\Interceptors\Context\CallContextInterface;
-use Spiral\Interceptors\HandlerInterface;
 
 /**
  * @psalm-type TParameters = array{event: object}
  */
-final class Core implements CoreInterface, HandlerInterface
+final class Core implements CoreInterface
 {
     public function __construct(
-        private readonly EventDispatcherInterface $dispatcher,
-    ) {}
+        private readonly EventDispatcherInterface $dispatcher
+    ) {
+    }
 
     /**
      * @param string $controller event name
@@ -27,10 +26,5 @@ final class Core implements CoreInterface, HandlerInterface
         \assert(\is_object($parameters['event']));
 
         return $this->dispatcher->dispatch($parameters['event']);
-    }
-
-    public function handle(CallContextInterface $context): mixed
-    {
-        return $this->dispatcher->dispatch($context->getArguments()['event']);
     }
 }

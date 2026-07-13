@@ -13,10 +13,8 @@ final class PlainListenerRegistry implements ListenerRegistryInterface
 {
     /** @var class-string[] */
     public array $events = [];
-
     /** @var \Closure Last listener */
     public \Closure $listener;
-
     public int $priority;
     public int $listeners = 0;
 

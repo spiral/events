@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Events;
 
+use BadMethodCallException;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
@@ -24,6 +25,16 @@ final class AutowireListenerFactoryTest extends TestCase
     private ContainerInterface|MockInterface $container;
     private ClassAndMethodAttribute|MockInterface $listener;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->ev = new FooEvent('test');
+        $this->factory = new AutowireListenerFactory();
+        $this->container = m::mock(ContainerInterface::class);
+        $this->listener = m::mock(ClassAndMethodAttribute::class);
+    }
+
     public function testCreateListenerForClass(): void
     {
         $this->container->shouldReceive('get')
@@ -33,7 +44,7 @@ final class AutowireListenerFactoryTest extends TestCase
 
         $this->listener->shouldReceive('onFooEvent')->once()->with($this->ev);
 
-        ContainerScope::runScope($this->container, function (): void {
+        ContainerScope::runScope($this->container, function () {
             $listener = $this->factory->create(ClassAndMethodAttribute::class, 'onFooEvent');
             $listener($this->ev);
         });
@@ -43,7 +54,7 @@ final class AutowireListenerFactoryTest extends TestCase
     {
         $this->listener->shouldReceive('onFooEvent')->once()->with($this->ev);
 
-        ContainerScope::runScope($this->container, function (): void {
+        ContainerScope::runScope($this->container, function () {
             $listener = $this->factory->create($this->listener, 'onFooEvent');
             $listener($this->ev);
         });
@@ -65,7 +76,7 @@ final class AutowireListenerFactoryTest extends TestCase
             ->once()
             ->with([$this->listener, 'onFooEventWithTwoArguments'], ['event' => $this->ev]);
 
-        ContainerScope::runScope($this->container, function (): void {
+        ContainerScope::runScope($this->container, function () {
             $listener = $this->factory->create(ClassAndMethodAttribute::class, 'onFooEventWithTwoArguments');
             $listener($this->ev);
         });
@@ -82,7 +93,7 @@ final class AutowireListenerFactoryTest extends TestCase
             ->once()
             ->with([$this->listener, 'onFooEventWithTwoArguments'], ['event' => $this->ev]);
 
-        ContainerScope::runScope($this->container, function (): void {
+        ContainerScope::runScope($this->container, function () {
             $listener = $this->factory->create($this->listener, 'onFooEventWithTwoArguments');
             $listener($this->ev);
         });
@@ -90,23 +101,13 @@ final class AutowireListenerFactoryTest extends TestCase
 
     public function testListenerWithoutMethodShouldThrowAnException(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
-            'Listener `Spiral\Tests\Events\Fixtures\Listener\ClassAndMethodAttribute` does not contain `test` method.',
+            'Listener `Spiral\Tests\Events\Fixtures\Listener\ClassAndMethodAttribute` does not contain `test` method.'
         );
 
-        ContainerScope::runScope($this->container, function (): void {
+        ContainerScope::runScope($this->container, function () {
             $this->factory->create(ClassAndMethodAttribute::class, 'test');
         });
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->ev = new FooEvent('test');
-        $this->factory = new AutowireListenerFactory();
-        $this->container = m::mock(ContainerInterface::class);
-        $this->listener = m::mock(ClassAndMethodAttribute::class);
     }
 }

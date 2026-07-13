@@ -12,5 +12,7 @@ use Spiral\Tests\Events\Fixtures\Event\FooEvent;
 #[Listener(event: BarEvent::class)]
 final class ClassDoubleAttribute
 {
-    public function __invoke(object $event): void {}
+    public function __invoke(object $event): void
+    {
+    }
 }

@@ -16,6 +16,7 @@ final class Listener
     public function __construct(
         public readonly ?string $event = null,
         public ?string $method = null,
-        public readonly int $priority = 0,
-    ) {}
+        public readonly int $priority = 0
+    ) {
+    }
 }

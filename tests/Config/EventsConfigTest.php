@@ -17,23 +17,23 @@ final class EventsConfigTest extends TestCase
     {
         $config = new EventsConfig();
 
-        self::assertSame([], $config->getProcessors());
+        $this->assertSame([], $config->getProcessors());
     }
 
     public function testGetsProcessors(): void
     {
         $config = new EventsConfig([
-            'processors' => ['foo', 'bar'],
+            'processors' => ['foo', 'bar']
         ]);
 
-        self::assertSame(['foo', 'bar'], $config->getProcessors());
+        $this->assertSame(['foo', 'bar'], $config->getProcessors());
     }
 
     public function testGetsEmptyListeners(): void
     {
         $config = new EventsConfig();
 
-        self::assertSame([], $config->getListeners());
+        $this->assertSame([], $config->getListeners());
     }
 
     public function testGetsListeners(): void
@@ -42,21 +42,21 @@ final class EventsConfigTest extends TestCase
             'listeners' => [
                 'foo' => [
                     'bar',
-                    $listener = new EventListener('baz'),
-                ],
-            ],
+                    $listener = new EventListener('baz')
+                ]
+            ]
         ]);
 
-        self::assertSame($listener, $config->getListeners()['foo'][1]);
-        self::assertInstanceOf(EventListener::class, $config->getListeners()['foo'][0]);
-        self::assertSame('bar', $config->getListeners()['foo'][0]->listener);
+        $this->assertSame($listener, $config->getListeners()['foo'][1]);
+        $this->assertInstanceOf(EventListener::class, $config->getListeners()['foo'][0]);
+        $this->assertSame('bar', $config->getListeners()['foo'][0]->listener);
     }
 
     public function testGetsEmptyInterceptors(): void
     {
         $config = new EventsConfig();
 
-        self::assertSame([], $config->getInterceptors());
+        $this->assertSame([], $config->getInterceptors());
     }
 
     public function testGetsInterceptors(): void
@@ -65,14 +65,16 @@ final class EventsConfigTest extends TestCase
             'interceptors' => [
                 'bar',
                 new class implements CoreInterceptorInterface {
-                    public function process(string $controller, string $action, array $parameters, CoreInterface $core): mixed {}
+                    public function process(string $controller, string $action, array $parameters, CoreInterface $core): mixed
+                    {
+                    }
                 },
-                new Autowire('foo'),
-            ],
+                new Autowire('foo')
+            ]
         ]);
 
-        self::assertSame('bar', $config->getInterceptors()[0]);
-        self::assertInstanceOf(CoreInterceptorInterface::class, $config->getInterceptors()[1]);
-        self::assertInstanceOf(Autowire::class, $config->getInterceptors()[2]);
+        $this->assertSame('bar', $config->getInterceptors()[0]);
+        $this->assertInstanceOf(CoreInterceptorInterface::class, $config->getInterceptors()[1]);
+        $this->assertInstanceOf(Autowire::class, $config->getInterceptors()[2]);
     }
 }
